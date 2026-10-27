@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PetCareAI</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+<section id="auth">
+ <div class="hero">
+  <div class="brand"><span class="brand-mark" aria-hidden="true">P</span>PetCareAI</div>
+  <div class="hero-copy"><h1>A little more care, every day.</h1><p>Keep your pet's routines, health notes and next steps together in one calm place.</p></div>
+  <p class="hero-note">Made for the everyday moments that add up.</p>
+ </div>
+ <div class="formwrap"><form class="formcard" id="authForm" novalidate>
+  <span class="form-kicker">Your pet's day, in sync</span><h2 id="authTitle">Welcome back</h2><p class="mute" id="authSub">Log in to see what your pet needs today.</p>
+  <div id="nameBox" hidden><label for="aName">Your name</label><input id="aName" autocomplete="name"></div>
+  <label for="aEmail">Email</label><input id="aEmail" type="email" autocomplete="email">
+  <label for="aPass">Password</label><input id="aPass" type="password" autocomplete="current-password">
+  <p class="err" id="authErr" role="alert"></p>
+  <button class="btn" style="width:100%" id="authBtn">Log in</button>
+  <p class="switch"><span id="swTxt">New here?</span> <button type="button" id="swBtn">Create an account</button></p>
+ </form></div>
+</section>
+
+<div id="app">
+ <nav id="nav"></nav>
+ <main id="view"></main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
