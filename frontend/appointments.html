@@ -1,0 +1,471 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetCareAI - Appointments</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f7f3ff;
+      color: #35234d;
+      padding: 25px;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: auto;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 22px;
+      color: #7952b3;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    header {
+      background: linear-gradient(135deg, #7952b3, #ad8be8);
+      color: white;
+      padding: 30px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      margin-bottom: 24px;
+      box-shadow: 0 5px 20px #35234d12;
+    }
+
+    h2 {
+      margin-bottom: 18px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    button, .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 17px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .tab {
+      background: #eee5ff;
+      color: #50347a;
+    }
+
+    .tab.active, .btn {
+      background: #7952b3;
+      color: white;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 15px 0 7px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #dfd3f2;
+      border-radius: 10px;
+      background: white;
+      color: #35234d;
+    }
+
+    textarea {
+      min-height: 85px;
+      resize: vertical;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 18px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .submit {
+      width: 100%;
+      margin-top: 22px;
+    }
+
+    .booking {
+      background: #faf7ff;
+      border: 1px solid #e7dcf7;
+      padding: 17px;
+      border-radius: 12px;
+      margin-top: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .booking h3 {
+      margin-bottom: 10px;
+    }
+
+    .booking p {
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+
+    .cancel {
+      margin-top: 12px;
+      background: #fff0f0;
+      color: #a52b43;
+    }
+
+    .note {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #77668c;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 14px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      .card, header {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <a class="back" href="dashboard.html">← Back to Dashboard</a>
+
+    <header>
+      <h1>🐾 PetCareAI Appointments</h1>
+      <p>Book care for your pet, all in one place.</p>
+    </header>
+
+    <section class="card">
+      <h2>📅 Book an Appointment</h2>
+
+      <div class="tabs">
+        <button type="button" id="doctorTab"
+          class="tab active" onclick="setType('Doctor')">
+          🩺 Pet Doctor
+        </button>
+
+        <button type="button" id="groomerTab"
+          class="tab" onclick="setType('Groomer')">
+          ✂️ Pet Groomer
+        </button>
+      </div>
+
+      <form id="bookingForm">
+        <input type="hidden" id="appointmentType" value="Doctor">
+
+        <div class="grid">
+          <div>
+            <label for="petName">Pet name *</label>
+            <input id="petName" required placeholder="Your pet's name">
+          </div>
+
+          <div>
+            <label for="ownerName">Your name *</label>
+            <input id="ownerName" required placeholder="Your name">
+          </div>
+
+          <div>
+            <label for="petType">Pet type *</label>
+            <select id="petType" required>
+              <option value="">Select pet</option>
+              <option>Dog</option>
+              <option>Cat</option>
+              <option>Rabbit</option>
+              <option>Bird</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="service">Service *</label>
+            <select id="service" required></select>
+          </div>
+
+          <div class="full">
+            <label for="professional">Preferred professional</label>
+            <select id="professional">
+              <option value="No preference">No preference</option>
+              <option value="Sample professional 1">
+                Sample professional 1
+              </option>
+              <option value="Sample professional 2">
+                Sample professional 2
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label for="date">Preferred date *</label>
+            <input id="date" type="date" required>
+          </div>
+
+          <div>
+            <label for="time">Preferred time *</label>
+            <select id="time" required>
+              <option value="">Select time</option>
+              <option>09:00 AM</option>
+              <option>10:00 AM</option>
+              <option>11:00 AM</option>
+              <option>12:00 PM</option>
+              <option>02:00 PM</option>
+              <option>03:00 PM</option>
+              <option>04:00 PM</option>
+              <option>05:00 PM</option>
+            </select>
+          </div>
+
+          <div class="full">
+            <label for="notes" id="notesLabel">
+              Symptoms or concerns
+            </label>
+            <textarea id="notes"
+              placeholder="Describe your pet's concerns"></textarea>
+          </div>
+        </div>
+
+        <button class="btn submit" type="submit">
+          Request Appointment 🐾
+        </button>
+
+        <p class="note">
+          Demo version: professional names and times are sample options.
+          This form does not contact a real clinic.
+        </p>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>💜 My Appointments</h2>
+      <div id="bookingList">No appointments yet.</div>
+      <p class="note">
+        Demo appointments are saved in this browser only.
+      </p>
+    </section>
+
+  </div>
+
+  <script>
+    const storageKey = "petcareai_appointments";
+
+    const services = {
+      Doctor: [
+        "General health checkup",
+        "Vaccination",
+        "Skin and allergy consultation",
+        "Dental checkup",
+        "Illness or injury consultation"
+      ],
+      Groomer: [
+        "Bath and blow-dry",
+        "Hair trimming",
+        "Nail clipping",
+        "Ear cleaning",
+        "Full grooming"
+      ]
+    };
+
+    const dateInput = document.getElementById("date");
+
+    function localDateString(date) {
+      return [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0")
+      ].join("-");
+    }
+
+    const today = localDateString(new Date());
+    dateInput.min = today;
+
+    function setType(type) {
+      document.getElementById("appointmentType").value = type;
+
+      document.getElementById("doctorTab")
+        .classList.toggle("active", type === "Doctor");
+
+      document.getElementById("groomerTab")
+        .classList.toggle("active", type === "Groomer");
+
+      const serviceSelect = document.getElementById("service");
+      serviceSelect.innerHTML = "";
+
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "Select a service";
+      serviceSelect.appendChild(placeholder);
+
+      services[type].forEach(function(service) {
+        const option = document.createElement("option");
+        option.value = service;
+        option.textContent = service;
+        serviceSelect.appendChild(option);
+      });
+
+      document.getElementById("notesLabel").textContent =
+        type === "Doctor"
+          ? "Symptoms or concerns"
+          : "Grooming instructions";
+
+      document.getElementById("notes").placeholder =
+        type === "Doctor"
+          ? "Describe health concerns"
+          : "Describe grooming preferences";
+    }
+
+    function getBookings() {
+      try {
+        const data = JSON.parse(
+          localStorage.getItem(storageKey) || "[]"
+        );
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    document.getElementById("bookingForm")
+      .addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const date = dateInput.value;
+
+        if (date < today) {
+          alert("Please select today or a future date.");
+          return;
+        }
+
+        const booking = {
+          id: Date.now(),
+          type: document.getElementById("appointmentType").value,
+          petName: document.getElementById("petName").value.trim(),
+          ownerName: document.getElementById("ownerName").value.trim(),
+          petType: document.getElementById("petType").value,
+          service: document.getElementById("service").value,
+          professional: document.getElementById("professional").value,
+          date: date,
+          time: document.getElementById("time").value,
+          notes: document.getElementById("notes").value.trim(),
+          status: "Pending"
+        };
+
+        const bookings = getBookings();
+        bookings.push(booking);
+
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(bookings));
+        } catch (error) {
+          alert("Unable to save. Check your browser settings.");
+          return;
+        }
+
+        this.reset();
+        setType("Doctor");
+        renderBookings();
+
+        alert("Your demo appointment request has been saved! 💜");
+      });
+
+    function renderBookings() {
+      const list = document.getElementById("bookingList");
+      const bookings = getBookings();
+
+      list.innerHTML = "";
+
+      if (bookings.length === 0) {
+        list.textContent = "No appointments yet.";
+        return;
+      }
+
+      bookings.sort(function(a, b) {
+        return (a.date + a.time).localeCompare(b.date + b.time);
+      });
+
+      bookings.forEach(function(booking) {
+        const card = document.createElement("div");
+        card.className = "booking";
+
+        const heading = document.createElement("h3");
+        heading.textContent =
+          (booking.type === "Doctor" ? "🩺 " : "✂️ ") +
+          booking.type + " appointment";
+
+        const details = document.createElement("p");
+        details.textContent =
+          "Pet: " + booking.petName + " (" + booking.petType + ")" +
+          "\nService: " + booking.service +
+          "\nDate: " + booking.date +
+          "\nTime: " + booking.time +
+          "\nProfessional: " + booking.professional +
+          "\nStatus: " + booking.status +
+          (booking.notes ? "\nNotes: " + booking.notes : "");
+
+        const cancel = document.createElement("button");
+        cancel.className = "cancel";
+        cancel.textContent = "Cancel request";
+
+        cancel.addEventListener("click", function() {
+          if (!confirm("Cancel this demo request?")) return;
+
+          const remaining = getBookings().filter(function(item) {
+            return item.id !== booking.id;
+          });
+
+          localStorage.setItem(storageKey, JSON.stringify(remaining));
+          renderBookings();
+        });
+
+        card.appendChild(heading);
+        card.appendChild(details);
+        card.appendChild(cancel);
+        list.appendChild(card);
+      });
+    }
+
+    setType("Doctor");
+    renderBookings();
+  </script>
+</body>
+</html>

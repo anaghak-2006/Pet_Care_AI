@@ -1,0 +1,563 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetCareAI - Find & Lost</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f7f3ff;
+  color: #35234d;
+  padding: 25px;
+}
+
+header {
+  background: linear-gradient(120deg, #7952b3, #ad8be8);
+  color: white;
+  padding: 25px;
+  border-radius: 22px;
+  margin-bottom: 25px;
+  box-shadow: 0 6px 18px #8f70bd30;
+}
+
+header h1 {
+  margin-bottom: 10px;
+}
+
+header p {
+  line-height: 1.6;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 15px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+
+button, .tab {
+  border: none;
+  cursor: pointer;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.tab {
+  background: white;
+  color: #6743a0;
+  border: 1px solid #e6dafa;
+}
+
+.tab.active {
+  background: #8058c9;
+  color: white;
+}
+
+.panel, .report-card {
+  background: white;
+  border: 1px solid #e9defb;
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 5px 18px #8f70bd12;
+}
+
+.panel h2, .reports-heading {
+  margin-bottom: 18px;
+  color: #58358e;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dfd2f5;
+  border-radius: 10px;
+  background: #fdfbff;
+  color: #35234d;
+  font-size: 14px;
+}
+
+textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid #bba0ed;
+  border-color: #8058c9;
+}
+
+.primary {
+  background: linear-gradient(120deg, #7952b3, #ad8be8);
+  color: white;
+}
+
+.secondary {
+  background: #f0e8ff;
+  color: #6743a0;
+}
+
+.submit-button {
+  margin-top: 18px;
+  width: 100%;
+  padding: 14px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.note {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #746588;
+  line-height: 1.5;
+}
+
+.reports-heading {
+  margin-top: 30px;
+}
+
+.report-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.report-card {
+  overflow: hidden;
+}
+
+.report-photo {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  border-radius: 14px;
+  background: #f0e8ff;
+  margin-bottom: 15px;
+}
+
+.status {
+  display: inline-block;
+  background: #ffe5f2;
+  color: #a42c76;
+  border-radius: 20px;
+  padding: 6px 11px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.report-card h3 {
+  margin-bottom: 10px;
+}
+
+.report-card p {
+  margin: 7px 0;
+  line-height: 1.5;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.report-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.empty {
+  grid-column: 1 / -1;
+  background: white;
+  border-radius: 18px;
+  padding: 30px;
+  text-align: center;
+  color: #79698f;
+  line-height: 1.7;
+}
+
+@media (max-width: 650px) {
+  body {
+    padding: 14px;
+  }
+
+  .form-grid, .report-list {
+    grid-template-columns: 1fr;
+  }
+
+  .field.full {
+    grid-column: auto;
+  }
+
+  header {
+    padding: 20px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <h1>🐾 Find & Lost Pets</h1>
+  <p>Every pet deserves to find its way home. Help lost pets reunite with their families.</p>
+  <a class="back-link" href="dashboard.html">← Back to Dashboard</a>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-type="lost">🐶 Report Lost Pet</button>
+  <button class="tab" data-type="found">🐾 Report Found Pet</button>
+  <button class="tab" data-type="all">🔎 View All Reports</button>
+</div>
+
+<section class="panel" id="formPanel">
+  <h2 id="formTitle">🐶 Report a Lost Pet</h2>
+
+  <form id="petReportForm">
+    <div class="form-grid">
+
+      <div class="field">
+        <label for="petName">Pet's Name *</label>
+        <input id="petName" required maxlength="60"
+               placeholder="e.g. Buddy">
+      </div>
+
+      <div class="field">
+        <label for="petType">Animal Type *</label>
+        <select id="petType" required>
+          <option value="">Choose animal</option>
+          <option>Dog</option>
+          <option>Cat</option>
+          <option>Bird</option>
+          <option>Rabbit</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="breed">Breed / Description</label>
+        <input id="breed" maxlength="100"
+               placeholder="e.g. Golden Retriever">
+      </div>
+
+      <div class="field">
+        <label for="reportDate" id="dateLabel">Date Last Seen *</label>
+        <input id="reportDate" type="date" required>
+      </div>
+
+      <div class="field full">
+        <label for="location" id="locationLabel">Last-Seen Location *</label>
+        <input id="location" required maxlength="200"
+               placeholder="Area, street or landmark">
+      </div>
+
+      <div class="field full">
+        <label for="description">Identifying Details</label>
+        <textarea id="description" maxlength="1000"
+          placeholder="Colour, collar, special markings, or other details"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="contactName">Contact Person *</label>
+        <input id="contactName" required maxlength="80"
+               placeholder="Your name">
+      </div>
+
+      <div class="field">
+        <label for="contactPhone">Contact Number *</label>
+        <input id="contactPhone" type="tel" required
+               maxlength="25" placeholder="Your phone number">
+      </div>
+
+      <div class="field full">
+        <label for="petPhoto">Pet Photo (optional)</label>
+        <input id="petPhoto" type="file"
+               accept="image/jpeg,image/png,image/webp">
+      </div>
+
+    </div>
+
+    <button class="primary submit-button" type="submit">
+      Save Pet Report 💜
+    </button>
+
+    <p class="note">
+      Your reports are saved in this browser for now. Avoid including
+      your home address or other sensitive personal information.
+    </p>
+  </form>
+</section>
+
+<h2 class="reports-heading" id="reportsHeading">🐾 Recent Pet Reports</h2>
+<div class="report-list" id="reportList"></div>
+
+</div>
+
+<script>
+const STORAGE_KEY = "petcareai_find_lost_reports";
+
+let currentType = "lost";
+let selectedPhoto = "";
+let reports = loadReports();
+
+const form = document.getElementById("petReportForm");
+const formPanel = document.getElementById("formPanel");
+const formTitle = document.getElementById("formTitle");
+const reportList = document.getElementById("reportList");
+const reportsHeading = document.getElementById("reportsHeading");
+const photoInput = document.getElementById("petPhoto");
+
+function loadReports() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    return Array.isArray(saved) ? saved : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveReports() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(reports));
+    return true;
+  } catch (error) {
+    alert("Storage is full. Try a smaller photo or remove an old report.");
+    return false;
+  }
+}
+
+function setType(type) {
+  currentType = type;
+
+  document.querySelectorAll(".tab").forEach(button => {
+    button.classList.toggle("active", button.dataset.type === type);
+  });
+
+  formPanel.classList.toggle("hidden", type === "all");
+
+  if (type === "lost") {
+    formTitle.textContent = "🐶 Report a Lost Pet";
+    document.getElementById("dateLabel").textContent = "Date Last Seen *";
+    document.getElementById("locationLabel").textContent = "Last-Seen Location *";
+  } else if (type === "found") {
+    formTitle.textContent = "🐾 Report a Found Pet";
+    document.getElementById("dateLabel").textContent = "Date Found *";
+    document.getElementById("locationLabel").textContent = "Found Location *";
+  }
+
+  renderReports();
+}
+
+document.querySelectorAll(".tab").forEach(button => {
+  button.addEventListener("click", () => setType(button.dataset.type));
+});
+
+photoInput.addEventListener("change", () => {
+  selectedPhoto = "";
+  const file = photoInput.files[0];
+
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    alert("Please choose an image file.");
+    photoInput.value = "";
+    return;
+  }
+
+  if (file.size > 700 * 1024) {
+    alert("Please choose an image smaller than 700 KB.");
+    photoInput.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    selectedPhoto = reader.result;
+  };
+
+  reader.onerror = () => {
+    alert("Could not read this photo. Please try another one.");
+    photoInput.value = "";
+  };
+
+  reader.readAsDataURL(file);
+});
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+
+  const report = {
+    id: (crypto.randomUUID
+      ? crypto.randomUUID()
+      : String(Date.now()) + Math.random().toString(16).slice(2)),
+    type: currentType,
+    petName: document.getElementById("petName").value.trim(),
+    petType: document.getElementById("petType").value,
+    breed: document.getElementById("breed").value.trim(),
+    date: document.getElementById("reportDate").value,
+    location: document.getElementById("location").value.trim(),
+    description: document.getElementById("description").value.trim(),
+    contactName: document.getElementById("contactName").value.trim(),
+    contactPhone: document.getElementById("contactPhone").value.trim(),
+    photo: selectedPhoto,
+    createdAt: new Date().toISOString()
+  };
+
+  reports.unshift(report);
+
+  if (!saveReports()) {
+    reports.shift();
+    return;
+  }
+
+  form.reset();
+  selectedPhoto = "";
+  alert("Pet report saved successfully! 💜");
+  setType("all");
+});
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function renderReports() {
+  const filtered = currentType === "all"
+    ? reports
+    : reports.filter(report => report.type === currentType);
+
+  reportsHeading.textContent = currentType === "all"
+    ? "🔎 All Pet Reports"
+    : currentType === "lost"
+      ? "🐶 Lost Pet Reports"
+      : "🐾 Found Pet Reports";
+
+  if (filtered.length === 0) {
+    reportList.innerHTML = `
+      <div class="empty">
+        <h3>No reports yet 🐾</h3>
+        <p>When you save a lost or found pet report, it will appear here.</p>
+      </div>`;
+    return;
+  }
+
+  reportList.innerHTML = filtered.map(report => `
+    <article class="report-card">
+      ${report.photo
+        ? `<img class="report-photo" src="${report.photo}" alt="Photo of ${escapeHTML(report.petName)}">`
+        : `<div class="empty">🐾 No photo uploaded</div>`}
+
+      <span class="status">
+        ${report.type === "lost" ? "LOST PET" : "FOUND PET"}
+      </span>
+
+      <h3>${escapeHTML(report.petName)}</h3>
+      <p><strong>Animal:</strong> ${escapeHTML(report.petType)}</p>
+      <p><strong>Breed:</strong> ${escapeHTML(report.breed || "Not specified")}</p>
+      <p><strong>${report.type === "lost" ? "Last seen" : "Found"}:</strong>
+        ${escapeHTML(report.date)}</p>
+      <p><strong>Location:</strong> ${escapeHTML(report.location)}</p>
+      <p><strong>Details:</strong> ${escapeHTML(report.description || "No extra details")}</p>
+      <p><strong>Contact:</strong> ${escapeHTML(report.contactName)}</p>
+
+      <div class="report-actions">
+        <button class="primary" type="button"
+          data-contact="${escapeHTML(report.id)}">Contact</button>
+        <button class="secondary" type="button"
+          data-delete="${escapeHTML(report.id)}">Delete</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+reportList.addEventListener("click", event => {
+  const contactId = event.target.dataset.contact;
+  const deleteId = event.target.dataset.delete;
+
+  if (contactId) {
+    const report = reports.find(item => item.id === contactId);
+    if (!report) return;
+
+    const phone = report.contactPhone.replace(/[^\d+]/g, "");
+
+    if (!phone) {
+      alert("No valid contact number was provided.");
+      return;
+    }
+
+    window.location.href = "tel:" + phone;
+  }
+
+  if (deleteId) {
+    const report = reports.find(item => item.id === deleteId);
+    if (!report) return;
+
+    if (confirm("Delete this pet report?")) {
+      const oldReports = reports;
+      reports = reports.filter(item => item.id !== deleteId);
+
+      if (!saveReports()) {
+        reports = oldReports;
+        return;
+      }
+
+      renderReports();
+    }
+  }
+});
+
+setType("lost");
+</script>
+</body>
+</html>

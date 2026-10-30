@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetCareAI - Vaccination</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f7f4ff;
+      color: #33264a;
+      padding: 25px;
+    }
+
+    header {
+      background: #7652a8;
+      color: white;
+      padding: 22px;
+      border-radius: 16px;
+      margin-bottom: 25px;
+    }
+
+    header h1 {
+      margin-bottom: 8px;
+    }
+
+    .back {
+      display: inline-block;
+      color: white;
+      margin-top: 12px;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 15px #dcd2ee;
+    }
+
+    h2 {
+      color: #7652a8;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 7px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d4c6eb;
+      border-radius: 9px;
+      font-size: 15px;
+      background: #fdfcff;
+    }
+
+    button {
+      background: #7652a8;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 9px;
+      margin-top: 18px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background: #5e3e8b;
+    }
+
+    .record {
+      background: #f3edff;
+      padding: 16px;
+      border-radius: 10px;
+      margin-top: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .record p {
+      margin: 7px 0;
+    }
+
+    .delete {
+      background: #bd455b;
+      margin-top: 8px;
+    }
+
+    .empty {
+      color: #766b85;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <header>
+      <h1>🐾 PetCareAI</h1>
+      <p>Vaccination & Health Reminder</p>
+      <a class="back" href="index.html">← Back to Dashboard</a>
+    </header>
+
+    <section class="card">
+      <h2>💉 Add Vaccination Record</h2>
+
+      <form id="vaccineForm">
+        <label for="petName">Pet Name</label>
+        <input id="petName" type="text" required>
+
+        <label for="vaccineName">Vaccine Name</label>
+        <input id="vaccineName" type="text"
+               placeholder="e.g. Rabies" required>
+
+        <label for="lastDate">Last Vaccination Date</label>
+        <input id="lastDate" type="date" required>
+
+        <label for="nextDate">Next Vaccination Date</label>
+        <input id="nextDate" type="date" required>
+
+        <label for="vetName">Veterinarian / Clinic</label>
+        <input id="vetName" type="text"
+               placeholder="Optional">
+
+        <label for="notes">Notes</label>
+        <textarea id="notes" rows="3"
+                  placeholder="Optional notes"></textarea>
+
+        <button type="submit">Save Vaccination</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>📅 Vaccination Records</h2>
+      <div id="records">
+        <p class="empty">No vaccination records added yet.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+   
+const form = document.getElementById("vaccineForm");
+const records = document.getElementById("records");
+const storageKey = "petcareai_vaccinations";
+
+let vaccines = [];
+let editingIndex = -1;
+
+try {
+  vaccines = JSON.parse(localStorage.getItem(storageKey) || "[]");
+  if (!Array.isArray(vaccines)) vaccines = [];
+} catch {
+  vaccines = [];
+}
+
+function saveRecords() {
+  localStorage.setItem(storageKey, JSON.stringify(vaccines));
+  renderRecords();
+}
+
+function renderRecords() {
+  records.replaceChildren();
+
+  if (vaccines.length === 0) {
+    records.textContent = "No vaccination records added yet.";
+    return;
+  }
+
+  vaccines.forEach((v, index) => {
+    const card = document.createElement("div");
+    card.className = "record";
+
+    const title = document.createElement("h3");
+    title.textContent = v.petName + " — " + v.vaccineName;
+    card.appendChild(title);
+
+    [
+      "Last vaccination: " + v.lastDate,
+      "Next vaccination: " + v.nextDate,
+      "Veterinarian: " + (v.vetName || "Not provided"),
+      "Notes: " + (v.notes || "None")
+    ].forEach(text => {
+      const p = document.createElement("p");
+      p.textContent = text;
+      card.appendChild(p);
+    });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const next = new Date(v.nextDate + "T00:00:00");
+
+    const status = document.createElement("p");
+    status.style.fontWeight = "bold";
+
+    if (next < today) {
+      status.textContent = "⚠️ Vaccination overdue";
+    } else if (next.getTime() === today.getTime()) {
+      status.textContent = "🔔 Vaccination is due today";
+    } else {
+      status.textContent = "✅ Upcoming vaccination";
+    }
+
+    card.appendChild(status);
+
+    const editButton = document.createElement("button");
+    editButton.textContent = "Edit Record";
+
+    editButton.onclick = () => {
+      editingIndex = index;
+
+      document.getElementById("petName").value = v.petName;
+      document.getElementById("vaccineName").value = v.vaccineName;
+      document.getElementById("lastDate").value = v.lastDate;
+      document.getElementById("nextDate").value = v.nextDate;
+      document.getElementById("vetName").value = v.vetName || "";
+      document.getElementById("notes").value = v.notes || "";
+
+      form.querySelector('button[type="submit"]').textContent =
+        "Update Vaccination";
+
+      form.scrollIntoView({ behavior: "smooth" });
+    };
+
+    card.appendChild(editButton);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "delete";
+    deleteButton.textContent = "Delete Record";
+
+    deleteButton.onclick = () => {
+      if (!confirm("Delete this vaccination record?")) return;
+
+      vaccines.splice(index, 1);
+      editingIndex = -1;
+      form.reset();
+      form.querySelector('button[type="submit"]').textContent =
+        "Save Vaccination";
+      saveRecords();
+    };
+
+    card.appendChild(deleteButton);
+    records.appendChild(card);
+  });
+}
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+
+  const petName = document.getElementById("petName").value.trim();
+  const vaccineName = document.getElementById("vaccineName").value.trim();
+  const lastDate = document.getElementById("lastDate").value;
+  const nextDate = document.getElementById("nextDate").value;
+
+  if (!petName || !vaccineName || !lastDate || !nextDate) {
+    alert("Please fill in all required fields.");
+    return;
+  }
+
+  if (nextDate < lastDate) {
+    alert("Next vaccination date cannot be before the last date.");
+    return;
+  }
+
+  const vaccine = {
+    petName,
+    vaccineName,
+    lastDate,
+    nextDate,
+    vetName: document.getElementById("vetName").value.trim(),
+    notes: document.getElementById("notes").value.trim()
+  };
+
+  if (editingIndex >= 0) {
+    vaccines[editingIndex] = vaccine;
+  } else {
+    vaccines.push(vaccine);
+  }
+
+  saveRecords();
+  form.reset();
+  editingIndex = -1;
+
+  form.querySelector('button[type="submit"]').textContent =
+    "Save Vaccination";
+
+  alert("Vaccination record saved successfully!");
+});
+
+renderRecords();
+
+
+  </script>
+</body>
+</html>

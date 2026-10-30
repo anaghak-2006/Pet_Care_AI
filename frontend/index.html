@@ -1,35 +1,377 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PetCareAI</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="style.css?v=3">
-</head>
-<body>
-<section id="auth">
- <div class="hero">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">P</span>PetCareAI</div>
-  <div class="hero-copy"><h1>A little more care, every day.</h1><p>Keep your pet's routines, health notes and next steps together in one calm place.</p></div>
-  <p class="hero-note">Made for the everyday moments that add up.</p>
- </div>
- <div class="formwrap"><form class="formcard" id="authForm" novalidate>
-  <span class="form-kicker">Your pet's day, in sync</span><h2 id="authTitle">Welcome back</h2><p class="mute" id="authSub">Log in to see what your pet needs today.</p>
-  <div id="nameBox" hidden><label for="aName">Your name</label><input id="aName" autocomplete="name"></div>
-  <label for="aEmail">Email</label><input id="aEmail" type="email" autocomplete="email">
-  <label for="aPass">Password</label><input id="aPass" type="password" autocomplete="current-password">
-  <p class="err" id="authErr" role="alert"></p>
-  <button class="btn" style="width:100%" id="authBtn">Log in</button>
-  <p class="switch"><span id="swTxt">New here?</span> <button type="button" id="swBtn">Create an account</button></p>
- </form></div>
-</section>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetCareAI - Login</title>
 
-<div id="app">
- <nav id="nav"></nav>
- <main id="view"></main>
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #eee5ff, #d9c4ff, #f8f2ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    color: #392454;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 1000px;
+    min-height: 570px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #fff;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px #65409b25;
+}
+
+.puppy-side {
+    background: linear-gradient(150deg, #cbb0ff, #9c72dc);
+    padding: 45px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.brand {
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+}
+
+.puppy {
+    font-size: 115px;
+    margin: 28px 0 12px;
+    filter: drop-shadow(0 10px 8px #51307630);
+}
+
+.puppy-side h2 {
+    font-size: 27px;
+    margin: 8px 0;
+}
+
+.puppy-side p {
+    line-height: 1.7;
+    max-width: 300px;
+    color: #fff8ff;
+}
+
+.form-side {
+    padding: 55px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-side h1 {
+    font-size: 32px;
+    margin: 0 0 8px;
+    color: #57347f;
+}
+
+.subtitle {
+    color: #887a99;
+    margin-bottom: 30px;
+}
+
+label {
+    display: block;
+    margin: 17px 0 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid #dfd0f5;
+    background: #fcfaff;
+    border-radius: 12px;
+    outline: none;
+    font-size: 15px;
+    color: #392454;
+}
+
+input:focus {
+    border-color: #9666d6;
+    box-shadow: 0 0 0 3px #eadfff;
+}
+
+.password-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin: 18px 0 22px;
+    font-size: 13px;
+}
+
+.password-row label {
+    margin: 0;
+    font-weight: 500;
+}
+
+.forgot {
+    color: #8050bd;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.forgot:hover {
+    text-decoration: underline;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(90deg, #9869d8, #7544b5);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 7px 15px #8758c52b;
+}
+
+.login-btn:hover {
+    background: #693aa8;
+}
+
+.register {
+    text-align: center;
+    color: #82738f;
+    font-size: 14px;
+    margin-top: 23px;
+}
+
+.register a {
+    color: #8050bd;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.message {
+    font-size: 13px;
+    color: #7043a5;
+    margin-top: 12px;
+}
+
+@media (max-width: 700px) {
+    .login-card {
+        grid-template-columns: 1fr;
+    }
+
+    .puppy-side {
+        padding: 25px 18px;
+    }
+
+    .puppy {
+        font-size: 75px;
+        margin: 12px 0 4px;
+    }
+
+    .puppy-side h2 {
+        font-size: 22px;
+    }
+
+    .form-side {
+        padding: 32px 25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-card">
+
+    <section class="puppy-side">
+        <div class="brand">🐾 PetCareAI</div>
+
+        <div class="puppy" aria-label="Cute puppy">🐶</div>
+
+        <h2>Every Paw Deserves Love!</h2>
+        <p>
+            Smarter pet care, healthier lives.
+            Your furry friend's wellness starts here. 💜
+        </p>
+    </section>
+
+    <section class="form-side">
+        <h1 id="formTitle">Welcome Back!</h1>
+        <p class="subtitle" id="formSubtitle">Log in to continue to your pet's world.</p>
+
+        <form id="loginForm">
+            <div id="fullNameField" hidden>
+                <label for="fullName">Your name</label>
+                <input
+                    type="text"
+                    id="fullName"
+                    name="name"
+                    placeholder="Enter your name"
+                    autocomplete="name"
+                >
+            </div>
+
+            <label for="email">Email</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+            >
+
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                required
+            >
+
+            <div class="password-row">
+                <label>
+                    <input
+                        type="checkbox"
+                        id="showPassword"
+                        style="width:auto; vertical-align:middle;"
+                    >
+                    Show password
+                </label>
+
+                <a href="#" class="forgot" id="forgotLink">
+                    Forgot Password?
+                </a>
+            </div>
+
+            <button type="submit" class="login-btn" id="submitButton">Log in</button>
+            <p class="message" id="message" role="status"></p>
+        </form>
+
+        <div class="register">
+            <span id="registerPrompt">Don't have an account?</span>
+            <a href="#" id="registerLink">Register</a>
+        </div>
+    </section>
+
 </div>
 
-<script src="app.js"></script>
+<script>
+const API_URL = (window.PETCARE_API_URL || "http://127.0.0.1:8001").replace(/\/+$/, "");
+const form = document.getElementById("loginForm");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const nameInput = document.getElementById("fullName");
+const message = document.getElementById("message");
+const submitButton = document.getElementById("submitButton");
+let registering = false;
+
+function setMessage(text, isError = false) {
+    message.textContent = text;
+    message.style.color = isError ? "#b4421f" : "#26734d";
+}
+
+function setMode(isRegistering) {
+    registering = isRegistering;
+    document.getElementById("fullNameField").hidden = !registering;
+    nameInput.required = registering;
+    document.getElementById("formTitle").textContent = registering ? "Create Account" : "Welcome Back!";
+    document.getElementById("formSubtitle").textContent = registering
+        ? "Create an account to keep your pet's care together."
+        : "Log in to continue to your pet's world.";
+    document.getElementById("registerPrompt").textContent = registering
+        ? "Already have an account?"
+        : "Don't have an account?";
+    document.getElementById("registerLink").textContent = registering ? "Log in" : "Register";
+    submitButton.textContent = registering ? "Create account" : "Log in";
+    passwordInput.autocomplete = registering ? "new-password" : "current-password";
+    setMessage("");
+}
+
+document.getElementById("showPassword").addEventListener("change", function () {
+    passwordInput.type = this.checked ? "text" : "password";
+});
+
+document.getElementById("loginForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
+    const name = nameInput.value.trim();
+    if (registering && password.length < 8) {
+        setMessage("Password must be at least 8 characters long.", true);
+        return;
+    }
+
+    submitButton.disabled = true;
+    setMessage(registering ? "Creating your account…" : "Signing in…");
+
+    try {
+        if (registering) {
+            const registration = await fetch(`${API_URL}/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, password })
+            });
+            const registrationResult = await registration.json();
+            if (!registration.ok) {
+                const detail = registrationResult.detail;
+                throw new Error(typeof detail === "string" ? detail : "Could not create the account.");
+            }
+        }
+
+        const response = await fetch(`${API_URL}/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            const detail = result.detail;
+            throw new Error(typeof detail === "string" ? detail : "Email or password is incorrect.");
+        }
+
+        sessionStorage.setItem("petcare.auth", JSON.stringify({
+            user: result.user,
+            access_token: result.access_token,
+            token_type: result.token_type
+        }));
+        window.location.assign("dashboard.html");
+    } catch (error) {
+        setMessage(error.message || "Could not connect to the PetCareAI server.", true);
+    } finally {
+        submitButton.disabled = false;
+    }
+});
+
+document.getElementById("forgotLink").addEventListener("click", function (event) {
+    event.preventDefault();
+    setMessage("Password recovery is not available yet.");
+});
+
+document.getElementById("registerLink").addEventListener("click", function (event) {
+    event.preventDefault();
+    setMode(!registering);
+});
+</script>
+
 </body>
 </html>

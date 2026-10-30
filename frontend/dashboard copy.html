@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetCareAI Dashboard</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f7f3ff;
+      color: #35234d;
+    }
+
+    header {
+      background: linear-gradient(120deg, #7952b3, #ad8be8);
+      color: white;
+      padding: 25px 6%;
+    }
+
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: #f1eaff;
+    }
+
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 100px);
+    }
+
+    aside {
+      width: 230px;
+      background: white;
+      padding: 25px 16px;
+      border-right: 1px solid #eadfff;
+    }
+
+    aside h3 {
+      margin: 5px 10px 20px;
+      color: #7952b3;
+    }
+
+    aside a {
+      display: block;
+      text-decoration: none;
+      color: #55436b;
+      padding: 13px;
+      margin-bottom: 8px;
+      border-radius: 10px;
+    }
+
+    aside a:hover,
+    aside a.active {
+      background: #eee4ff;
+      color: #7045a5;
+    }
+
+    main {
+      flex: 1;
+      padding: 30px;
+      min-width: 0;
+    }
+
+    .welcome {
+      margin-bottom: 25px;
+    }
+
+    .welcome h2 {
+      margin-bottom: 8px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: white;
+      padding: 23px;
+      border-radius: 18px;
+      box-shadow: 0 5px 20px #5135780d;
+      border: 1px solid #eee5ff;
+    }
+
+    .card .emoji {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #786b88;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .section-title {
+      margin: 25px 0 15px;
+    }
+
+    .pet-profile {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+    }
+
+    .pet-photo {
+      background: #eee4ff;
+      border-radius: 18px;
+      width: 100px;
+      height: 100px;
+      display: grid;
+      place-items: center;
+      font-size: 55px;
+    }
+
+    .pet-details {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .pet-details p {
+      margin: 9px 0;
+    }
+
+    button {
+      border: none;
+      background: #8054bd;
+      color: white;
+      padding: 11px 17px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    button:hover {
+      background: #633d99;
+    }
+
+    .reminder {
+      background: #fff8e9;
+      border: 1px solid #f5e3b9;
+    }
+
+    @media (max-width: 650px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      aside {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #eadfff;
+      }
+
+      aside a {
+        display: inline-block;
+        padding: 9px;
+      }
+
+      main {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>🐾 PetCareAI</h1>
+    <p>Your pet's health and happiness, all in one place.</p>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <h3>MENU</h3>
+      <a class="active" href="#home">🏠 Dashboard</a>
+      <a href="petprofile.html">🐶 Pet Profile</a>
+      <a href="#health">🩺 Health History</a>
+      <a href="#vaccination">💉 Vaccination</a>
+      <a href="#ai">🤖 AI Assistant</a>
+      <a href="#lost">🔎 Find & Lost</a>
+      <a href="index.html">↩ Login Page</a>
+    </aside>
+
+    <main id="home">
+      <div class="welcome">
+        <h2>Welcome to your Dashboard! 💜</h2>
+        <p>Let's keep your furry friend healthy and happy.</p>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="emoji">🐕</div>
+          <h3>My Pet</h3>
+          <p>View your pet's profile and important details.</p>
+          <button onclick="openSection('pet')">View Profile</button>
+        </div>
+
+        <div class="card">
+          <div class="emoji">💉</div>
+          <h3>Vaccination</h3>
+          <p>Keep track of vaccinations and upcoming dates.</p>
+          <button onclick="openSection('vaccination')">View Reminders</button>
+        </div>
+
+        <div class="card">
+          <div class="emoji">🩺</div>
+          <h3>Health History</h3>
+          <p>Organise medical reports and health information.</p>
+          <button onclick="openSection('health')">View History</button>
+        </div>
+
+        <div class="card">
+          <div class="emoji">🤖</div>
+          <h3>AI Assistant</h3>
+          <p>Explore pet-care guidance and helpful tips.</p>
+          <button onclick="openSection('ai')">Open Assistant</button>
+        </div>
+      </div>
+
+      <h2 class="section-title" id="pet">🐶 My Pet Profile</h2>
+      <div class="card pet-profile">
+        <div class="pet-photo">🐕</div>
+        <div class="pet-details">
+          <h3 id="petName">Your Pet</h3>
+          <p>Pet type: <span id="petType">Not added</span></p>
+          <p>Breed: <span id="petBreed">Not added</span></p>
+          <p>Age: <span id="petAge">Not added</span></p>
+          <p>Weight: <span id="petWeight">Not added</span></p>
+          <button onclick="window.location.href='petprofile.html'">
+  Create / Edit Pet Profile
+</button>
+        </div>
+      </div>
+
+      <h2 class="section-title" id="vaccination">💉 Vaccination Reminder</h2>
+      <div class="card reminder">
+        <h3>Keep vaccinations up to date</h3>
+        <p id="vaccineText">Add your pet's next vaccination date to track it here.</p>
+        <button onclick="addVaccine()">Add Vaccination Date</button>
+      </div>
+
+      <h2 class="section-title" id="health">🩺 Health History</h2>
+      <div class="card">
+        <p id="healthText">No health records added yet.</p>
+        <button onclick="addHealth()">Add Health Note</button>
+      </div>
+
+      <h2 class="section-title" id="ai">🤖 AI Assistant</h2>
+      <div class="card">
+        <p>Need help with your pet? This section will connect to the PetCareAI chatbot.</p>
+        <button onclick="alert('AI Assistant will be connected to the backend later.')">
+          Open AI Assistant
+        </button>
+      </div>
+
+      <h2 class="section-title" id="lost">🔎 Find & Lost</h2>
+      <div class="card">
+        <p>Find & Lost features will be added in a future step.</p>
+        <button onclick="alert('Find & Lost feature is coming soon.')">Explore Feature</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function loadPetProfile() {
+  const savedPet = localStorage.getItem("petCareProfile");
+
+  if (!savedPet) return;
+
+  const pet = JSON.parse(savedPet);
+
+  document.getElementById("petName").textContent =
+    pet.name || "Your Pet";
+
+  document.getElementById("petType").textContent =
+    pet.type || "Not added";
+
+  document.getElementById("petBreed").textContent =
+    pet.breed || "Not added";
+
+  document.getElementById("petAge").textContent =
+    pet.age ? pet.age + " years" : "Not added";
+
+  document.getElementById("petWeight").textContent =
+    pet.weight ? pet.weight + " kg" : "Not added";
+
+  if (pet.photo) {
+    const photoBox = document.querySelector(".pet-photo");
+    photoBox.innerHTML = "";
+
+    const img = document.createElement("img");
+    img.src = pet.photo;
+    img.alt = "Pet photo";
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = "cover";
+    img.style.borderRadius = "18px";
+
+    photoBox.appendChild(img);
+  }
+}
+
+loadPetProfile();
+    function openSection(id) {
+      document.getElementById(id).scrollIntoView({
+        behavior: "smooth"
+      });
+    }
+
+    function editPet() {
+      const name = prompt("Enter your pet's name:");
+      if (name === null || !name.trim()) return;
+
+      const type = prompt("Enter pet type (Dog/Cat/etc.):");
+      if (type === null) return;
+
+      const breed = prompt("Enter breed:");
+      if (breed === null) return;
+
+      const age = prompt("Enter age:");
+      if (age === null) return;
+
+      const weight = prompt("Enter weight (kg):");
+      if (weight === null) return;
+
+      document.getElementById("petName").textContent = name;
+      document.getElementById("petType").textContent = type;
+      document.getElementById("petBreed").textContent = breed;
+      document.getElementById("petAge").textContent = age;
+      document.getElementById("petWeight").textContent = weight + " kg";
+    }
+
+    function addVaccine() {
+      const date = prompt("Enter next vaccination date (e.g. 25/11/2026):");
+      if (date && date.trim()) {
+        document.getElementById("vaccineText").textContent =
+          "Next vaccination date: " + date;
+      }
+    }
+
+    function addHealth() {
+      const note = prompt("Enter a health note:");
+      if (note && note.trim()) {
+        document.getElementById("healthText").textContent = note;
+      }
+    }
+    function loadPetProfile() {
+  const savedPet = localStorage.getItem("petCareProfile");
+
+  if (!savedPet) return;
+
+  const pet = JSON.parse(savedPet);
+
+  document.getElementById("petName").textContent =
+    pet.name || "Your Pet";
+
+  document.getElementById("petType").textContent =
+    pet.type || "Not added";
+
+  document.getElementById("petBreed").textContent =
+    pet.breed || "Not added";
+
+  document.getElementById("petAge").textContent =
+    pet.age ? pet.age + " years" : "Not added";
+
+  document.getElementById("petWeight").textContent =
+    pet.weight ? pet.weight + " kg" : "Not added";
+}
+
+loadPetProfile();
+  </script>
+</body>
+</html>

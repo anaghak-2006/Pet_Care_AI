@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetCareAI Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --violet: #8a63e8;
+      --violet-dark: #6c45cf;
+      --plum: #3b2a66;
+      --pink: #ff8fb5;
+      --pink-soft: #ffe3ee;
+      --peach: #ffe9d6;
+      --lilac: #f0e9ff;
+      --page: #fbf8ff;
+      --ink: #2f2350;
+      --muted: #7a6f93;
+      --line: #eee6fb;
+      --mint: #1f9d7a;
+      --mint-bg: #def6ec;
+      --amber: #a96500;
+      --amber-bg: #fff0cf;
+      --coral: #c93d4b;
+      --coral-bg: #fde4e8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Nunito", "Segoe UI", Arial, sans-serif;
+      background: var(--page);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    h1, h2, h3, .brand { font-family: "Baloo 2", "Comic Sans MS", "Segoe UI", sans-serif; }
+
+    a:focus-visible, button:focus-visible, label:focus-within {
+      outline: 3px solid var(--violet);
+      outline-offset: 2px;
+    }
+
+    .layout { display: flex; min-height: 100vh; }
+
+    /* Sidebar */
+    aside {
+      width: 250px;
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 2px solid var(--line);
+      padding: 26px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--violet-dark);
+      padding: 0 12px 24px;
+    }
+
+    aside nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+
+    aside a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 15px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      transition: background .15s, color .15s;
+    }
+
+    aside a:hover { background: var(--lilac); color: var(--violet-dark); }
+
+    aside a.active {
+      background: linear-gradient(120deg, var(--violet), #b18cff);
+      color: #fff;
+    }
+
+    aside .logout { margin-top: auto; }
+
+    /* Main */
+    main { flex: 1; min-width: 0; padding: 30px 38px 60px; max-width: 1120px; }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 32px;
+      padding: 30px;
+      background: linear-gradient(125deg, var(--pink-soft), var(--lilac) 60%, var(--peach));
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .hero .paw {
+      position: absolute;
+      font-size: 54px;
+      opacity: .13;
+      transform: rotate(-20deg);
+      pointer-events: none;
+    }
+    .paw.p1 { top: 10px; right: 24px; }
+    .paw.p2 { bottom: 8px; right: 34%; transform: rotate(18deg); font-size: 40px; }
+    .paw.p3 { top: 40%; left: 46%; font-size: 34px; }
+
+    .photo-wrap { position: relative; flex-shrink: 0; }
+
+    .photo-frame {
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      border: 7px solid #fff;
+      box-shadow: 0 10px 28px #8a63e82e;
+      background: var(--lilac);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+    }
+
+    .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-frame .fallback { font-size: 90px; display: none; }
+
+    .photo-btn {
+      position: absolute;
+      right: -4px;
+      bottom: 8px;
+      background: var(--violet);
+      color: #fff;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 7px 13px;
+      cursor: pointer;
+      border: 3px solid #fff;
+    }
+    .photo-btn:hover { background: var(--violet-dark); }
+    .photo-btn input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+
+    .hero-text { flex: 1; min-width: 230px; position: relative; }
+
+    .hero-text .hello { color: var(--muted); font-weight: 700; }
+
+    .hero-text h1 { font-size: 36px; line-height: 1.1; margin: 2px 0 14px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .chip {
+      background: #fff;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 14px;
+      box-shadow: 0 2px 8px #8a63e814;
+    }
+    .chip .label { color: var(--muted); }
+    .chip .value { font-weight: 700; }
+
+    .btn {
+      display: inline-block;
+      border: none;
+      background: var(--violet);
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 11px 22px;
+      border-radius: 999px;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 18px;
+      transition: background .15s;
+    }
+    .btn:hover { background: var(--violet-dark); }
+    .btn.ghost { background: #fff; color: var(--violet-dark); border: 2px solid var(--violet); }
+    .btn.ghost:hover { background: var(--lilac); }
+
+    /* Cards */
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+
+    .panel {
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: 26px;
+      padding: 24px;
+    }
+    .panel h2 { font-size: 20px; margin-bottom: 12px; }
+    .panel p { color: var(--muted); font-size: 14px; }
+
+    .vacc.ok { border-color: #b9e8d6; background: #f6fffb; }
+    .vacc.soon { border-color: #f6dba0; background: #fffbf0; }
+    .vacc.late { border-color: #f4b9c1; background: #fff7f8; }
+
+    .badge {
+      display: inline-block;
+      font-weight: 800;
+      font-size: 14px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+    .badge.ok { background: var(--mint-bg); color: var(--mint); }
+    .badge.soon { background: var(--amber-bg); color: var(--amber); }
+    .badge.late { background: var(--coral-bg); color: var(--coral); }
+    .badge.none { background: var(--lilac); color: var(--violet-dark); }
+
+    #vaccineText p { margin-top: 5px; }
+    #vaccineText strong { color: var(--ink); }
+
+    .section-title { font-size: 22px; margin: 34px 0 14px; }
+
+    .actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+
+    .action {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: 26px;
+      padding: 22px;
+      transition: transform .15s, border-color .15s;
+    }
+    .action:hover { transform: translateY(-3px); border-color: var(--pink); }
+
+    .action .icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+    .action:nth-child(1) .icon { background: var(--pink-soft); }
+    .action:nth-child(2) .icon { background: var(--lilac); }
+    .action:nth-child(3) .icon { background: var(--peach); }
+    .action:nth-child(4) .icon { background: #def4ff; }
+
+    .action h3 { font-size: 18px; }
+    .action p { font-size: 14px; color: var(--muted); }
+
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 800;
+      background: var(--amber-bg);
+      color: var(--amber);
+      padding: 3px 12px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    /* One-time tail wag on load */
+    .wag { display: inline-block; transform-origin: 70% 70%; animation: wag .9s ease-in-out 0.4s 2; }
+    @keyframes wag { 0%,100% { transform: rotate(0); } 25% { transform: rotate(18deg); } 75% { transform: rotate(-14deg); } }
+
+    @media (max-width: 900px) {
+      .grid2 { grid-template-columns: 1fr; }
+      main { padding: 24px 18px 50px; }
+    }
+
+    @media (max-width: 720px) {
+      .layout { flex-direction: column; }
+      aside { width: 100%; height: auto; position: static; padding: 14px; border-right: none; border-bottom: 2px solid var(--line); }
+      .brand { padding-bottom: 10px; }
+      aside nav { flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 4px; }
+      aside a { white-space: nowrap; padding: 10px 14px; }
+      aside .logout { margin-top: 0; }
+      .hero { justify-content: center; text-align: center; padding: 24px 18px; }
+      .chips { justify-content: center; }
+      .hero-text h1 { font-size: 30px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+    <aside>
+      <div class="brand">🐾 PetCareAI</div>
+      <nav>
+        <a class="active" href="#home">🏠 Dashboard</a>
+        <a href="petprofile.html">🐶 Pet Profile</a>
+        <a href="healthhistory.html">🩺 Health History</a>
+        <a href="vaccination.html">💉 Vaccination</a>
+        <a href="dietplan.html">🥗 Diet Plan</a>
+        <a href="appointments.html">📅 Doctor Appointments</a>
+        <a href="#ai">🤖 AI Assistant</a>
+         <a href="findlost.html">🔎 Find &amp; Lost</a>
+        <a class="logout" href="index.html" id="logoutLink">↩ Log out</a>
+      </nav>
+    </aside>
+
+    <main id="home">
+      <section class="hero" id="pet" aria-label="Pet profile">
+        <span class="paw p1" aria-hidden="true">🐾</span>
+        <span class="paw p2" aria-hidden="true">🐾</span>
+        <span class="paw p3" aria-hidden="true">🐾</span>
+
+        <div class="photo-wrap">
+          <div class="photo-frame">
+            <!-- Put your puppy photo at images/puppy.jpg -->
+            <img id="petPhoto" src="images/puppy.jpg" alt="Your pet's photo"
+                 onerror="this.style.display='none'; document.getElementById('photoFallback').style.display='block';">
+            <span class="fallback" id="photoFallback" aria-hidden="true">🐶</span>
+          </div>
+          <label class="photo-btn">📷 Change photo
+            <input type="file" id="photoInput" accept="image/*">
+          </label>
+        </div>
+
+        <div class="hero-text">
+          <p class="hello"><span class="wag">👋</span> Welcome back!</p>
+          <h1 id="greetTitle">Let's look after your pet 💜</h1>
+          <div class="chips">
+            <div class="chip"><span class="label">Name </span><span class="value" id="petName">Your Pet</span></div>
+            <div class="chip"><span class="label">Type </span><span class="value" id="petType">Not added</span></div>
+            <div class="chip"><span class="label">Breed </span><span class="value" id="petBreed">Not added</span></div>
+            <div class="chip"><span class="label">Age </span><span class="value" id="petAge">Not added</span></div>
+            <div class="chip"><span class="label">Weight </span><span class="value" id="petWeight">Not added</span></div>
+          </div>
+          <a class="btn" href="petprofile.html">Create / edit profile</a>
+        </div>
+      </section>
+
+      <div class="grid2">
+        <section class="panel vacc" id="vaccination" aria-label="Vaccination reminder">
+          <h2>💉 Next vaccination</h2>
+          <div id="vaccineStatus"></div>
+          <div id="vaccineText">Loading vaccination details...</div>
+          <a class="btn ghost" href="vaccination.html">View / add vaccination</a>
+        </section>
+
+        <section class="panel" id="ai">
+          <h2>🤖 AI assistant</h2>
+          <p>Ask about food, behavior or symptoms. The PetCareAI chatbot will connect here once the backend is ready.</p>
+          <a class="btn" href="aiassistant.html">Open assistant 💬</a>
+        </section>
+      </div>
+
+      <h2 class="section-title">Quick actions</h2>
+      <div class="actions">
+        <a class="action" href="healthhistory.html">
+          <div class="icon">🩺</div>
+          <h3>Health history</h3>
+          <p>Vet visits, treatments and notes.</p>
+        </a>
+        <a class="action" href="vaccination.html">
+          <div class="icon">💉</div>
+          <h3>Vaccination</h3>
+          <p>Track shots and upcoming dates.</p>
+        </a>
+        <a class="action" href="dietplan.html">
+          <div class="icon">🥗</div>
+          <h3>Diet plan</h3>
+          <p>Meals, feeding times and allergies.</p>
+        </a>
+        <a class="action" href="petprofile.html">
+          <div class="icon">🐶</div>
+          <h3>Pet profile</h3>
+          <p>Update your pet's details.</p>
+        </a>
+      </div>
+
+      <section class="panel" id="lost" style="margin-top:34px;">
+  <h2>🔎 Find &amp; Lost</h2>
+  <p>Report a missing pet or help reunite a found pet with its owner.</p>
+  <a class="btn" href="findlost.html">Open Find &amp; Lost 🐾</a>
+</section>
+    </main>
+  </div>
+
+  <script>
+    const photoKey = "petcareai_pet_photo";
+    let authSession = null;
+
+    try {
+      authSession = JSON.parse(sessionStorage.getItem("petcare.auth") || "null");
+    } catch (error) {
+      authSession = null;
+    }
+
+    if (!authSession || !authSession.access_token || !authSession.user) {
+      window.location.replace("index.html");
+    } else {
+      const firstName = authSession.user.name.split(/\s+/)[0];
+      document.querySelector(".hello").textContent = "Welcome back, " + firstName + "!";
+    }
+
+    document.getElementById("logoutLink").addEventListener("click", function () {
+      sessionStorage.removeItem("petcare.auth");
+    });
+
+    function loadPetProfile() {
+      const saved = localStorage.getItem("petCareProfile");
+      if (!saved) return;
+
+      try {
+        const pet = JSON.parse(saved);
+        const name = pet.petName || pet.name;
+
+        document.getElementById("petName").textContent = name || "Your Pet";
+        document.getElementById("petType").textContent = pet.petType || pet.type || "Not added";
+        document.getElementById("petBreed").textContent = pet.petBreed || pet.breed || "Not added";
+        document.getElementById("petAge").textContent = pet.petAge || pet.age || "Not added";
+        document.getElementById("petWeight").textContent = pet.petWeight || pet.weight || "Not added";
+
+        if (name) {
+          document.getElementById("greetTitle").textContent = "Let's look after " + name + " 💜";
+        }
+      } catch (error) {
+        console.error("Could not load pet profile:", error);
+      }
+    }
+
+    /* Pet photo: a saved upload wins, otherwise images/puppy.jpg, otherwise a 🐶 emoji */
+    function showPhoto(src) {
+      const img = document.getElementById("petPhoto");
+      document.getElementById("photoFallback").style.display = "none";
+      img.style.display = "block";
+      img.src = src;
+    }
+
+    function loadPhoto() {
+      try {
+        const saved = localStorage.getItem(photoKey);
+        if (saved) showPhoto(saved);
+      } catch (e) { /* storage unavailable */ }
+    }
+
+    document.getElementById("photoInput").addEventListener("change", function () {
+      const file = this.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        const image = new Image();
+        image.onload = function () {
+          // Shrink to 400x400 so it fits in localStorage
+          const size = 400;
+          const canvas = document.createElement("canvas");
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext("2d");
+          const side = Math.min(image.width, image.height);
+          ctx.drawImage(image,
+            (image.width - side) / 2, (image.height - side) / 2, side, side,
+            0, 0, size, size);
+          const data = canvas.toDataURL("image/jpeg", 0.85);
+          try { localStorage.setItem(photoKey, data); } catch (e) { alert("Photo is too large to save."); }
+          showPhoto(data);
+        };
+        image.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function setStatus(card, cls, text) {
+      const holder = document.getElementById("vaccineStatus");
+      holder.replaceChildren();
+      const badge = document.createElement("span");
+      badge.className = "badge " + cls;
+      badge.textContent = text;
+      holder.appendChild(badge);
+      card.classList.remove("ok", "soon", "late");
+      if (cls !== "none") card.classList.add(cls);
+    }
+
+    function loadVaccinationRecords() {
+      const box = document.getElementById("vaccineText");
+      const card = document.getElementById("vaccination");
+
+      let vaccines = [];
+      try {
+        vaccines = JSON.parse(localStorage.getItem("petcareai_vaccinations") || "[]");
+      } catch {
+        vaccines = [];
+      }
+
+      if (!Array.isArray(vaccines) || vaccines.length === 0) {
+        setStatus(card, "none", "Nothing added yet");
+        box.textContent = "Add your pet's first vaccination to get reminders.";
+        return;
+      }
+
+      const valid = vaccines.filter(v => v.nextDate);
+      if (valid.length === 0) {
+        setStatus(card, "none", "No dates set");
+        box.textContent = "Add a next vaccination date to see reminders.";
+        return;
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const upcoming = valid
+        .filter(v => new Date(v.nextDate + "T00:00:00") >= today)
+        .sort((a, b) => a.nextDate.localeCompare(b.nextDate));
+
+      const vaccine = upcoming.length > 0
+        ? upcoming[0]
+        : valid.sort((a, b) => b.nextDate.localeCompare(a.nextDate))[0];
+
+      const next = new Date(vaccine.nextDate + "T00:00:00");
+      const days = Math.round((next - today) / 86400000);
+
+      if (days < 0) {
+        setStatus(card, "late", "Overdue by " + Math.abs(days) + (Math.abs(days) === 1 ? " day" : " days"));
+      } else if (days === 0) {
+        setStatus(card, "soon", "Due today");
+      } else if (days <= 14) {
+        setStatus(card, "soon", "Due in " + days + (days === 1 ? " day" : " days"));
+      } else {
+        setStatus(card, "ok", "Due in " + days + " days");
+      }
+
+      box.replaceChildren();
+      [
+        ["Pet", vaccine.petName],
+        ["Vaccine", vaccine.vaccineName],
+        ["Last given", vaccine.lastDate],
+        ["Next due", vaccine.nextDate]
+      ].forEach(([label, value]) => {
+        const p = document.createElement("p");
+        const strong = document.createElement("strong");
+        strong.textContent = label + ": ";
+        p.append(strong, document.createTextNode(value || "Not added"));
+        box.appendChild(p);
+      });
+    }
+
+    function openSection(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
+
+    loadPetProfile();
+    loadPhoto();
+    loadVaccinationRecords();
+  </script>
+</body>
+</html>

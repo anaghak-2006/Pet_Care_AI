@@ -1,0 +1,575 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetCareAI - Diet Plan</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f7f3ff;
+  color: #35234d;
+  padding: 25px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+}
+
+header {
+  background: linear-gradient(135deg, #7952b3, #ad8be8);
+  color: white;
+  padding: 25px;
+  border-radius: 18px;
+  margin-bottom: 25px;
+}
+
+header h1 {
+  margin-bottom: 10px;
+}
+
+header p {
+  line-height: 1.6;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 18px;
+  color: #7952b3;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 16px;
+  margin-bottom: 22px;
+  box-shadow: 0 4px 15px #35234d12;
+}
+
+h2 {
+  margin-bottom: 18px;
+  color: #7952b3;
+}
+
+label {
+  display: block;
+  margin: 13px 0 7px;
+  font-weight: bold;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d8c8ee;
+  border-radius: 9px;
+  background: #fdfbff;
+  color: #35234d;
+  font-size: 15px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 85px;
+}
+
+button {
+  border: none;
+  border-radius: 9px;
+  padding: 12px 18px;
+  margin-top: 15px;
+  background: #7952b3;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+button:hover {
+  background: #624092;
+}
+
+.danger {
+  background: #c95370;
+  margin-left: 8px;
+}
+
+.danger:hover {
+  background: #a83955;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.info {
+  background: #f7f3ff;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+
+.small {
+  font-size: 13px;
+  color: #725f85;
+  line-height: 1.5;
+}
+
+ul {
+  padding-left: 22px;
+  line-height: 1.8;
+}
+
+.empty {
+  color: #806d92;
+  padding: 10px 0;
+}
+
+@media (max-width: 650px) {
+  body {
+    padding: 14px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  header, .card {
+    padding: 18px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<a class="back" href="dashboard.html">← Back to Dashboard</a>
+
+<header>
+  <h1>🥗 Pet Diet & Nutrition</h1>
+  <p>Healthy meals, feeding schedules and allergy tracking for your furry friend.</p>
+</header>
+
+<section class="card">
+  <h2>🐾 Pet Information</h2>
+
+  <div class="grid">
+    <div>
+      <label for="petName">Pet Name</label>
+      <input id="petName" placeholder="Enter your pet's name">
+    </div>
+
+    <div>
+      <label for="petType">Pet Type</label>
+      <select id="petType">
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="petAge">Age</label>
+      <input id="petAge" placeholder="e.g. 2 years">
+    </div>
+
+    <div>
+      <label for="petWeight">Weight (kg)</label>
+      <input id="petWeight" type="number" min="0.1" step="0.1"
+             placeholder="Enter weight">
+    </div>
+  </div>
+
+  <button type="button" onclick="savePet()">Save Pet Information</button>
+</section>
+
+<section class="card">
+  <h2>🍲 My Diet Plan</h2>
+  <p class="small">
+    Save your pet's usual food and feeding instructions.
+    Meal suggestions are general guidance, not a personalized veterinary diet.
+  </p>
+
+  <label for="foodType">Main Food Type</label>
+  <select id="foodType">
+    <option value="Commercial pet food">Commercial pet food</option>
+    <option value="Veterinarian-prescribed diet">Veterinarian-prescribed diet</option>
+    <option value="Home-prepared food">Home-prepared food</option>
+    <option value="Mixed diet">Mixed diet</option>
+  </select>
+
+  <label for="mealNotes">Food and Meal Notes</label>
+  <textarea id="mealNotes"
+    placeholder="Enter food brand, food type, portion advised by your vet, etc."></textarea>
+
+  <label for="mealFrequency">Meals Per Day</label>
+  <select id="mealFrequency">
+    <option value="1">1 meal</option>
+    <option value="2" selected>2 meals</option>
+    <option value="3">3 meals</option>
+    <option value="4">4 meals</option>
+  </select>
+
+  <button type="button" onclick="saveDiet()">Save Diet Plan</button>
+
+  <div id="dietResult" class="info" aria-live="polite">
+    Your saved diet plan will appear here.
+  </div>
+</section>
+
+<section class="card">
+  <h2>⏰ Feeding Schedule</h2>
+
+  <label for="mealName">Meal Name</label>
+  <select id="mealName">
+    <option>Breakfast</option>
+    <option>Lunch</option>
+    <option>Dinner</option>
+    <option>Snack</option>
+  </select>
+
+  <label for="mealTime">Feeding Time</label>
+  <input id="mealTime" type="time">
+
+  <label for="mealFood">Food to Serve</label>
+  <input id="mealFood" placeholder="e.g. Usual prescribed food">
+
+  <button type="button" onclick="addMeal()">Add Feeding Schedule</button>
+
+<button type="button" onclick="enableNotifications()">
+  🔔 Enable Feeding Notifications
+</button>
+
+<p id="notificationStatus" class="small" aria-live="polite">
+  Notifications are not enabled yet.
+</p>
+
+  <div id="mealList" aria-live="polite"></div>
+
+  <p class="small">
+    Note: These schedules are saved in this browser. Notifications are not
+    enabled by this page yet.
+  </p>
+</section>
+
+<section class="card">
+  <h2>⚠️ Food Allergies</h2>
+
+  <label for="allergyFood">Food or Ingredient</label>
+  <input id="allergyFood" placeholder="Enter known allergen">
+
+  <label for="allergyReaction">Reaction / Notes</label>
+  <textarea id="allergyReaction"
+    placeholder="Describe the known reaction or vet's advice"></textarea>
+
+  <button type="button" onclick="addAllergy()">Save Allergy</button>
+
+  <div id="allergyList" aria-live="polite"></div>
+  <p class="small">
+    Record suspected as well as confirmed allergies accurately.
+    Ask a veterinarian to assess suspected food allergies.
+  </p>
+</section>
+
+<section class="card">
+  <h2>💡 General Food Safety</h2>
+  <ul>
+    <li>Keep fresh water available throughout the day.</li>
+    <li>Use food appropriate for your pet's species and life stage.</li>
+    <li>Avoid chocolate, grapes, raisins, onions and garlic for dogs.</li>
+    <li>Never give cats dog food as their regular diet.</li>
+    <li>Ask your vet before changing diets or feeding homemade meals.</li>
+  </ul>
+</section>
+
+</div>
+
+<script>
+const STORAGE_KEY = "petcareai_diet_data";
+
+function getData() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+      pet: {},
+      diet: {},
+      meals: [],
+      allergies: []
+    };
+  } catch (error) {
+    return { pet: {}, diet: {}, meals: [], allergies: [] };
+  }
+}
+
+let data = getData();
+
+function persist() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function showMessage(elementId, message) {
+  document.getElementById(elementId).textContent = message;
+}
+
+function savePet() {
+  data.pet = {
+    name: document.getElementById("petName").value.trim(),
+    type: document.getElementById("petType").value,
+    age: document.getElementById("petAge").value.trim(),
+    weight: document.getElementById("petWeight").value
+  };
+
+  persist();
+  showMessage("dietResult", "Pet information saved successfully.");
+}
+
+function saveDiet() {
+  data.diet = {
+    foodType: document.getElementById("foodType").value,
+    notes: document.getElementById("mealNotes").value.trim(),
+    frequency: document.getElementById("mealFrequency").value
+  };
+
+  persist();
+  renderDiet();
+}
+
+function renderDiet() {
+  const result = document.getElementById("dietResult");
+
+  if (!data.diet.foodType) {
+    result.textContent = "Your saved diet plan will appear here.";
+    return;
+  }
+
+  result.textContent =
+    "Food type: " + data.diet.foodType +
+    " | Meals per day: " + data.diet.frequency +
+    " | Notes: " + (data.diet.notes || "None added");
+}
+
+function addMeal() {
+  const name = document.getElementById("mealName").value;
+  const time = document.getElementById("mealTime").value;
+  const food = document.getElementById("mealFood").value.trim();
+
+  if (!time || !food) {
+    alert("Please enter a feeding time and food.");
+    return;
+  }
+
+  data.meals.push({
+    id: Date.now() + Math.random(),
+    name,
+    time,
+    food
+  });
+
+  persist();
+  document.getElementById("mealFood").value = "";
+  renderMeals();
+}
+
+function renderMeals() {
+  const list = document.getElementById("mealList");
+  list.replaceChildren();
+
+  if (!data.meals.length) {
+    const p = document.createElement("p");
+    p.className = "empty";
+    p.textContent = "No feeding schedules added yet.";
+    list.appendChild(p);
+    return;
+  }
+
+  [...data.meals]
+    .sort((a, b) => a.time.localeCompare(b.time))
+    .forEach(meal => {
+      const card = document.createElement("div");
+      card.className = "info";
+
+      const title = document.createElement("strong");
+      title.textContent = meal.name + " — " + meal.time;
+
+      const detail = document.createElement("p");
+      detail.textContent = meal.food;
+
+      const remove = document.createElement("button");
+      remove.className = "danger";
+      remove.textContent = "Delete";
+      remove.onclick = () => {
+        data.meals = data.meals.filter(item => item.id !== meal.id);
+        persist();
+        renderMeals();
+      };
+
+      card.append(title, detail, remove);
+      list.appendChild(card);
+    });
+}
+
+function addAllergy() {
+  const food = document.getElementById("allergyFood").value.trim();
+  const reaction = document.getElementById("allergyReaction").value.trim();
+
+  if (!food) {
+    alert("Please enter a food or ingredient.");
+    return;
+  }
+
+  data.allergies.push({
+    id: Date.now() + Math.random(),
+    food,
+    reaction
+  });
+
+  persist();
+  document.getElementById("allergyFood").value = "";
+  document.getElementById("allergyReaction").value = "";
+  renderAllergies();
+}
+
+function renderAllergies() {
+  const list = document.getElementById("allergyList");
+  list.replaceChildren();
+
+  if (!data.allergies.length) {
+    const p = document.createElement("p");
+    p.className = "empty";
+    p.textContent = "No food allergies recorded.";
+    list.appendChild(p);
+    return;
+  }
+
+  data.allergies.forEach(allergy => {
+    const card = document.createElement("div");
+    card.className = "info";
+
+    const title = document.createElement("strong");
+    title.textContent = "⚠️ " + allergy.food;
+
+    const detail = document.createElement("p");
+    detail.textContent = allergy.reaction || "No reaction notes added.";
+
+    const remove = document.createElement("button");
+    remove.className = "danger";
+    remove.textContent = "Delete";
+    remove.onclick = () => {
+      data.allergies = data.allergies.filter(
+        item => item.id !== allergy.id
+      );
+      persist();
+      renderAllergies();
+    };
+
+    card.append(title, detail, remove);
+    list.appendChild(card);
+  });
+}
+
+function loadSavedData() {
+  document.getElementById("petName").value = data.pet.name || "";
+  document.getElementById("petType").value = data.pet.type || "dog";
+  document.getElementById("petAge").value = data.pet.age || "";
+  document.getElementById("petWeight").value = data.pet.weight || "";
+
+  if (data.diet.foodType) {
+    document.getElementById("foodType").value = data.diet.foodType;
+    document.getElementById("mealNotes").value = data.diet.notes || "";
+    document.getElementById("mealFrequency").value =
+      data.diet.frequency || "2";
+  }
+
+  renderDiet();
+  renderMeals();
+  renderAllergies();
+}
+
+function enableNotifications() {
+  if (!("Notification" in window)) {
+    document.getElementById("notificationStatus").textContent =
+      "Your browser does not support notifications.";
+    return;
+  }
+
+  Notification.requestPermission().then(permission => {
+    const status = document.getElementById("notificationStatus");
+
+    if (permission === "granted") {
+      status.textContent =
+        "Notifications enabled! Keep this page open for reminders.";
+      checkFeedingReminders();
+    } else {
+      status.textContent =
+        "Notifications are blocked. Allow them in browser settings.";
+    }
+  });
+}
+
+function checkFeedingReminders() {
+  if (!("Notification" in window) ||
+      Notification.permission !== "granted") {
+    return;
+  }
+
+  const now = new Date();
+  const today = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, "0"),
+    String(now.getDate()).padStart(2, "0")
+  ].join("-");
+
+  const currentTime =
+    String(now.getHours()).padStart(2, "0") + ":" +
+    String(now.getMinutes()).padStart(2, "0");
+
+  let notified = {};
+
+  try {
+    notified = JSON.parse(
+      localStorage.getItem(
+        "petcareai_fired_feeding_notifications"
+      ) || "{}"
+    );
+  } catch {
+    notified = {};
+  }
+
+  data.meals.forEach(meal => {
+    const key = today + "_" + meal.id;
+
+    if (meal.time === currentTime && !notified[key]) {
+      const petName = data.pet.name || "your pet";
+
+      new Notification("🐾 PetCareAI Feeding Reminder", {
+        body: "It's " + meal.name + " time for " + petName +
+          "! Food: " + meal.food
+      });
+
+      notified[key] = true;
+    }
+  });
+
+  localStorage.setItem(
+    "petcareai_fired_feeding_notifications",
+    JSON.stringify(notified)
+  );
+}
+
+loadSavedData();
+checkFeedingReminders();
+setInterval(checkFeedingReminders, 15000);
+</script>
+</body>
+</html>
